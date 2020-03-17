@@ -1,16 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SymplexGrid : MonoBehaviour
 {
+    const float MIN_SQUARE_SIZE = 0.05f;
+    public float _squareSize = 1.0f;
+    public float SquareSize
+    {
+        get
+        {
+            if (_squareSize <= MIN_SQUARE_SIZE)
+                return MIN_SQUARE_SIZE;
+            return _squareSize;
+        }
+    }
+
+    public bool debugDrawSymplexGrid = false;
+    public bool debugDrawSquareGrid = false;
+    public Vector2 debugDrawStart = Vector2.zero;
+    public Vector2 debugDrawEnd = new Vector2(10, 10);
+
     // Start is called before the first frame update
     void Start()
     {
         skewMatrix = new float[2][];
         //skewMatrix[0] = new float[] { 1.0f, 3.0f };
         skewMatrix[0] = new float[] { 1.0f, 0.0f };
-        skewMatrix[1] = new float[] { 1.0f / Mathf.Tan(Mathf.PI /3.0f),  1.0f / Mathf.Sin(Mathf.PI /3.0f)};
+        skewMatrix[1] = new float[] { 1.0f / Mathf.Tan(Mathf.PI / 3.0f), 1.0f / Mathf.Sin(Mathf.PI / 3.0f) };
         //skewMatrix[1] = new float[] { 0.0f, 1.0f };
     }
 
@@ -32,39 +47,38 @@ public class SymplexGrid : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(1.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(2.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(3.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(4.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(5.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(6.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(7.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(8.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-        Debug.DrawRay(skew(new Vector3(9.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 10.0f)), Color.black);
-                                                                                                                                                                                    
-                                                                                              
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 0.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 1.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 2.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 3.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 4.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 5.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 6.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 7.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 8.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 9.0f)), skew(new Vector3(10.0f, 0.0f, 0.0f)), Color.red);
+        if (debugDrawSymplexGrid)
+            debugDrawSymplex();
 
-        /*
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 0.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 1.0f)), skew(new Vector3(1.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 1.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 2.0f)), skew(new Vector3(2.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 2.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 3.0f)), skew(new Vector3(3.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 3.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 4.0f)), skew(new Vector3(4.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 4.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 5.0f)), skew(new Vector3(5.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 5.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 6.0f)), skew(new Vector3(6.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 6.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 7.0f)), skew(new Vector3(7.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 7.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 8.0f)), skew(new Vector3(8.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 8.0f)), Color.blue);
-        Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, 9.0f)), skew(new Vector3(9.0f, 0.0f, 0.0f) - new Vector3(0.0f, 0.0f, 9.0f)), Color.blue);*/
+        if (debugDrawSquareGrid)
+            debugDrawSquare();
+    }
+
+    void debugDrawSymplex()
+    {
+        for (float x = debugDrawStart.x; x < debugDrawEnd.y + SquareSize; x += SquareSize)
+        {
+            Debug.DrawRay(skew(new Vector3(x, 0.0f, 0.0f)), skew(new Vector3(0.0f, 0.0f, debugDrawEnd.x + SquareSize - debugDrawStart.x)), Color.black);
+        }
+
+        for (float y = debugDrawStart.y; y < debugDrawEnd.x + SquareSize; y += SquareSize)
+        {
+
+            Debug.DrawRay(skew(new Vector3(0.0f, 0.0f, y)), skew(new Vector3(debugDrawEnd.y + SquareSize - debugDrawStart.y, 0.0f, 0.0f)), Color.red);
+        }
+    }
+
+    void debugDrawSquare()
+    {
+        for (float x = debugDrawStart.x; x < debugDrawEnd.y + SquareSize; x += SquareSize)
+        {
+            Debug.DrawRay(new Vector3(x, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, debugDrawEnd.x + SquareSize - debugDrawStart.x), Color.black);
+        }
+
+        for (float y = debugDrawStart.y; y < debugDrawEnd.x + SquareSize; y += SquareSize)
+        {
+
+            Debug.DrawRay(new Vector3(0.0f, 0.0f, y), new Vector3(debugDrawEnd.y + SquareSize - debugDrawStart.y, 0.0f, 0.0f), Color.red);
+        }
     }
 }

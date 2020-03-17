@@ -358,6 +358,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e15239f351cfb4fa962e3135019f4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _squareSize: 1
+  debugDrawSymplexGrid: 0
+  debugDrawSquareGrid: 0
+  debugDrawStart: {x: 0, y: 0}
+  debugDrawEnd: {x: 10, y: 10}
 --- !u!64 &1192024139
 MeshCollider:
   m_ObjectHideFlags: 0
